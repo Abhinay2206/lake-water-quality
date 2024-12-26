@@ -8,7 +8,7 @@ const uploadImage = async (req, res) => {
         const { path, mimetype } = req.file;
 
         if (!path) {
-            throw new Error('Image data is required');
+            return res.status(400).json({ message: 'Image data is required' });
         }
 
         const imageData = fs.readFileSync(path);
@@ -22,9 +22,7 @@ const uploadImage = async (req, res) => {
         });
 
         await newImage.save();
-
-        console.log('Image data saved to MongoDB:', { name, path, mimetype });
-        res.status(200).json({ message: 'File uploaded and saved successfully' });
+        res.status(201).json({ message: 'File uploaded and saved successfully' });
     } catch (error) {
         if (error instanceof multer.MulterError) {
             console.error('MulterError:', error);

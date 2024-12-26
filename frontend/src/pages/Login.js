@@ -3,18 +3,26 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDarkMode } from '../components/DarkModeContext';
+import axios from 'axios';
 
 const Login = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { darkMode } = useDarkMode();
 
-  const handleSignIn = () => {
-    if (username && password) {
-      navigate("/page-layout", { state: { username } });
-    } else {
-      alert("Please enter your username and password.");
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://localhost:5010/api/auth/login', {
+        email,
+        password,
+      });
+      console.log('Login successful:', response.data);
+      localStorage.setItem('jwtToken', response.data.token);
+      navigate("/page-layout");
+    } catch (error) {
+      console.error('Login failed:', error.response ? error.response.data : error.message);
     }
   };  
 
@@ -34,17 +42,17 @@ const Login = () => {
             
           <div className="mb-4">
             <label
-              htmlFor="username"
+              htmlFor="email"
               className={`block ${darkMode ? 'text-gray-300' : 'text-gray-700'} text-sm font-bold mb-2`}
             >
-              Username
+              email
             </label>
             <input
               id="username"
-              type="text"
-              placeholder="Enter your username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline ${
                 darkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'bg-white text-gray-700'
               }`}

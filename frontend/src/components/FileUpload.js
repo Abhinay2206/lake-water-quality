@@ -1,5 +1,6 @@
 import React from "react";
 import { FiX } from "react-icons/fi";
+import { FiUploadCloud } from "react-icons/fi";
 
 const FileUpload = ({ onFileChange, selectedFile, fileSize, previewUrl, onFileRemove, darkMode }) => {
   const handleFileInputClick = () => {
@@ -17,7 +18,7 @@ const FileUpload = ({ onFileChange, selectedFile, fileSize, previewUrl, onFileRe
         hover:border-blue-500 transition-all duration-300 shadow-lg`}
       onClick={handleFileInputClick}
     >
-      <i className="bi bi-cloud-upload text-3xl text-blue-500 hover:text-blue-700 cursor-pointer mb-2.5"></i>
+      <FiUploadCloud className="text-3xl text-blue-500 hover:text-blue-700 cursor-pointer mb-2.5" />
       <input
         type="file"
         id="file-input"
@@ -30,7 +31,7 @@ const FileUpload = ({ onFileChange, selectedFile, fileSize, previewUrl, onFileRe
           ${darkMode ? 'text-gray-200' : 'text-gray-800'}
           hover:text-blue-500 transition-colors duration-200`}
       >
-        {selectedFile ? selectedFile : "Choose the satellite image"}
+        {selectedFile ? selectedFile.name : "Choose the satellite image"}
       </label>
       {fileSize && (
         <p className={`text-sm mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
@@ -46,10 +47,9 @@ const FileUpload = ({ onFileChange, selectedFile, fileSize, previewUrl, onFileRe
           <img
             src={previewUrl}
             alt="Preview"
-            // eslint-disable-next-line no-template-curly-in-string
-            className="w-[120px] h-[120px] object-cover rounded-lg shadow-md 
+            className={`w-[120px] h-[120px] object-cover rounded-lg shadow-md 
               border-2 transition-transform duration-300 group-hover:scale-105
-              ${darkMode ? 'border-gray-600' : 'border-gray-300'}"
+              ${darkMode ? 'border-gray-600' : 'border-gray-300'}`}
           />
           <button
             onClick={(e) => {

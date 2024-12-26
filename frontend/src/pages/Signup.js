@@ -1,17 +1,31 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDarkMode } from '../components/DarkModeContext';
+import axios from 'axios';
 
 const Signup = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [emailOrMobile, setEmailOrMobile] = useState("");
+  const [email, setEmail] = useState("");
   const { darkMode } = useDarkMode();
 
-  const handleCreateUser  = (e) => {
+  const handleCreateUser  = async(e) => {
     e.preventDefault();
-    navigate("/page-layout", { state: { username } });
+    try {
+      const response = await axios.post('http://localhost:5010/api/auth/register', {
+        name: username,
+        email: email,
+        password: password
+      });
+      
+      const { token } = response.data;
+      localStorage.setItem('jwtToken', token);
+      console.log('Registration successful:', response.data);
+      navigate('/page-layout');
+    } catch (error) {
+      console.error('Registration failed:', error.response ? error.response.data : error.message);
+    }
   };
 
   return (
@@ -33,6 +47,17 @@ const Signup = () => {
 
             <div className="mb-4">
               <input
+                type="text"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={`w-full p-2 rounded border border-blue-600 focus:outline-none ${darkMode ? 'bg-gray-700 text-gray-200' : 'bg-transparent text-black'}`}
+                required
+              />
+            </div>
+
+            <div className="mb-4">
+              <input
                 type="password"
                 placeholder="Password"
                 value={password}
@@ -41,18 +66,6 @@ const Signup = () => {
                 required
               />
             </div>
-
-            <div className="mb-4">
-              <input
-                type="text"
-                placeholder="Email or Mobile Number"
-                value={emailOrMobile}
-                onChange={(e) => setEmailOrMobile(e.target.value)}
-                className={`w-full p-2 rounded border border-blue-600 focus:outline-none ${darkMode ? 'bg-gray-700 text-gray-200' : 'bg-transparent text-black'}`}
-                required
-              />
-            </div>
-
             <button
               type="submit"
               className="bg-blue-500 text-white font-bold py-2 px-4 rounded-lg w-full hover:bg-blue-600"

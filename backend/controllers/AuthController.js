@@ -19,7 +19,6 @@ const registerUser = async (req, res) => {
             id: user._id,
             name: user.name,
             email: user.email,
-            role: user.role
           }, 
           jwt_token, 
           { expiresIn: '10h' }
@@ -33,7 +32,6 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
-        console.log(email, password);
         const user = await User.findOne({ email });
         if (!user) {
           return res.status(400).json({ error: 'Invalid credentials' });
@@ -47,7 +45,6 @@ const loginUser = async (req, res) => {
             id: user._id,
             name: user.name,
             email: user.email,
-            role: user.role
           }, 
           jwt_token, 
           { expiresIn: '10h' }

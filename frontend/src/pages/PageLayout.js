@@ -17,20 +17,30 @@ function PageLayout() {
   const [isResultsOpen, setIsResultsOpen] = useState(false);
   const [username, setUsername] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [history, setHistory] = useState([]);
 
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (location.state?.username) {
-      setUsername(location.state.username);
+      const token = localStorage.getItem('jwtToken');
+      if (token) {
+        const decodedToken = JSON.parse(atob(token.split('.')[1]));
+        setUsername(decodedToken.email);
+      }
+    
+
+    if (location.state?.history) {
+      setHistory(location.state.history);
     }
+    const storedHistory = JSON.parse(localStorage.getItem("history")) || [];
+    setHistory(storedHistory);
   }, [location.state]);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setSelectedFile(file.name);
+      setSelectedFile(file);
       setFileSize((file.size / 1024).toFixed(2) + " KB");
       const reader = new FileReader();
       reader.onload = () => setPreviewUrl(reader.result);
@@ -44,14 +54,48 @@ function PageLayout() {
     setPreviewUrl(null);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!lakeName || !selectedFile) {
       alert("Please enter a lake name and upload an image!");
       return;
     }
-    setResult({ status: "Excellent", pHLevel: 7.09, confidence: "77.8%" });
-    setIsResultsOpen(true);
+
+    const formData = new FormData();
+    formData.append("name", lakeName);
+    formData.append("image", selectedFile);
+
+    try {
+      const response = await fetch("http://localhost:5010/api/image/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to upload image");
+      }
+
+      const newResult = { status: "Excellent", pHLevel: 7.09, confidence: "77.8%" };
+      setResult(newResult);
+      setIsResultsOpen(true);
+
+      const timestamp = new Date().toLocaleString();
+      const newHistoryItem = { 
+        lakeName, 
+        timestamp, 
+        result: newResult, 
+        file: selectedFile.name, 
+        previewUrl: previewUrl || "" 
+      };
+
+      const currentUserHistory = JSON.parse(localStorage.getItem(username)) || [];
+      const updatedHistory = [...currentUserHistory, newHistoryItem];
+
+      localStorage.setItem(username, JSON.stringify(updatedHistory));
+      setHistory(updatedHistory);
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   const toggleDropdown = () => {
@@ -59,12 +103,13 @@ function PageLayout() {
   };
 
   const navigateTo = (path) => {
-    navigate(path, { state: { username } });
+    navigate(path, { state: { username, history } });
     setDropdownOpen(false);
   };
 
   const handleLogout = () => {
     setUsername("");
+    localStorage.removeItem('jwtToken');
     navigate('/login');
     setDropdownOpen(false);
   };
@@ -87,7 +132,7 @@ function PageLayout() {
               onClick={toggleDropdown}
             >
               <FiUser className="text-xl" />
-              {username}
+              {username.split('@')[0]} 
             </button>
             {dropdownOpen && (
               <div className={`absolute right-5 mt-16 w-56 rounded-xl shadow-2xl z-10 backdrop-blur-md 
