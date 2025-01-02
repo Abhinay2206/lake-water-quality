@@ -3,6 +3,7 @@ import { AiOutlineUser, AiOutlineMail } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { useDarkMode } from "../components/DarkModeContext";
 import { TbArrowBackUpDouble } from "react-icons/tb";
+import { jwtDecode } from "jwt-decode"; // Import jwtDecode from jwt-decode
 
 const Profile = () => {
   const [user, setUser] = useState({});
@@ -10,9 +11,13 @@ const Profile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser) {
-      setUser(storedUser); 
+    const token = localStorage.getItem("jwtToken"); // Get the JWT token from local storage
+    if (token) {
+      const decodedToken = jwtDecode(token); // Decode the JWT token
+      setUser({
+        username: decodedToken.name, // Set username from decoded token
+        emailOrMobile: decodedToken.email // Set email from decoded token
+      });
     }
   }, []);
 

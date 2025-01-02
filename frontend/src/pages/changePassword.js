@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { TbArrowBackUpDouble } from "react-icons/tb";
+import axios from 'axios';
+import { jwtDecode } from "jwt-decode"; // Import jwtDecode from jwt-decode
 
 const ChangePassword = () => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -10,26 +12,17 @@ const ChangePassword = () => {
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
 
-  const handlePasswordChange = () => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
+  const handlePasswordChange = async () => {
+    const token = localStorage.getItem("jwtToken");
 
-    if (!storedUser) {
+    if (!token) {
       setError("No user found. Please log in.");
       setSuccess("");
       return;
     }
 
-    if (currentPassword !== storedUser.password) {
-      setError("Current password is incorrect.");
-      setSuccess("");
-      return;
-    }
-
-    if (newPassword.length < 6) {
-      setError("New password must be at least 6 characters long.");
-      setSuccess("");
-      return;
-    }
+    const decodedToken = jwtDecode(token);
+    const email = decodedToken.email; // Extract email from decoded token
 
     if (newPassword !== confirmPassword) {
       setError("New password and confirm password do not match.");
@@ -37,12 +30,19 @@ const ChangePassword = () => {
       return;
     }
 
-    storedUser.password = newPassword;
+    try {
+      await axios.post('http://localhost:5010/api/auth/updatepass', {
+        email: email,
+        oldPassword: currentPassword,
+        newPassword: newPassword
+      });
 
-    localStorage.setItem("user", JSON.stringify(storedUser));
-
-    setSuccess("Password updated successfully!");
-    setError("");
+      setSuccess("Password updated successfully!");
+      setError("");
+    } catch (error) {
+      setError("Failed to update password. Please try again.");
+      setSuccess("");
+    }
   };
 
   useEffect(() => {
@@ -110,4 +110,3 @@ const ChangePassword = () => {
 };
 
 export default ChangePassword;
-
