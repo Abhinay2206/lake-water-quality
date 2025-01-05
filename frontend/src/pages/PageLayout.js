@@ -29,7 +29,6 @@ function PageLayout() {
         setUsername(decodedToken.email);
       }
     
-
     if (location.state?.history) {
       setHistory(location.state.history);
     }
@@ -61,29 +60,46 @@ function PageLayout() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("name", lakeName);
-    formData.append("image", selectedFile);
-
     try {
-      const response = await fetch("http://localhost:5010/api/image/upload", {
+      const token = localStorage.getItem('jwtToken');
+      const email = token ? JSON.parse(atob(token.split('.')[1])).email : "guest@example.com";
+
+      const predictionFormData = new FormData();
+      predictionFormData.append("image", selectedFile);
+
+      const predictionResponse = await fetch("http://127.0.0.1:5000/predict", {
+        method: "POST",
+        body: predictionFormData
+      });
+
+      if (!predictionResponse.ok) {
+        throw new Error("Failed to get prediction");
+      }
+
+      const predictionData = await predictionResponse.json();
+      setResult(predictionData);
+      setIsResultsOpen(true);
+
+      const formData = new FormData();
+      formData.append("name", lakeName);
+      formData.append("email", email);
+      formData.append("image", selectedFile);
+      formData.append("result", JSON.stringify(predictionData)); // Use predictionData instead of result
+
+      const uploadResponse = await fetch("http://localhost:5010/api/image/upload", {
         method: "POST",
         body: formData,
       });
 
-      if (!response.ok) {
+      if (!uploadResponse.ok) {
         throw new Error("Failed to upload image");
       }
-
-      const newResult = { status: "Excellent", pHLevel: 7.09, confidence: "77.8%" };
-      setResult(newResult);
-      setIsResultsOpen(true);
 
       const timestamp = new Date().toLocaleString();
       const newHistoryItem = { 
         lakeName, 
         timestamp, 
-        result: newResult, 
+        result: predictionData,
         file: selectedFile.name, 
         previewUrl: previewUrl || "" 
       };
@@ -93,6 +109,7 @@ function PageLayout() {
 
       localStorage.setItem(username, JSON.stringify(updatedHistory));
       setHistory(updatedHistory);
+
     } catch (error) {
       alert(error.message);
     }

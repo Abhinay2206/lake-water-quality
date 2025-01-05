@@ -42,3 +42,12 @@ def visualize_results(X_test, y_test, conv, pool, dense):
         axes[i].axis('off')
     
     plt.show()
+
+def predict(image, conv, pool, dense):
+    # Forward pass through the model for a new image
+    out = conv.forward(image)
+    out = pool.forward(out)
+    out = out.flatten()
+    out = dense.forward(out)
+    pred = sigmoid(out)  # Predicted probability
+    return 1 if pred >= 0.5 else 0  # Return class label (0 or 1)

@@ -5,6 +5,6 @@ const { uploadImage, getImage } = require('../controllers/ImageController');
 
 router.post("/upload", upload.single('image'), uploadImage);
 
-router.get("/:name", getImage);
+router.get("/:email", getImage);
 
 module.exports = router;

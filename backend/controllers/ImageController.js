@@ -4,7 +4,7 @@ const Image = require('../models/Image');
 
 const uploadImage = async (req, res) => {
     try {
-        const { name } = req.body;
+        const { name, email } = req.body; // Added email to the destructuring
         const { path, mimetype } = req.file;
 
         if (!path) {
@@ -15,10 +15,12 @@ const uploadImage = async (req, res) => {
 
         const newImage = new Image({
             name,
+            email, // Included email in the new Image object
             image: {
                 data: imageData,
                 contentType: mimetype
-            }
+            },
+            result: 'Pending' // Set a default value for result
         });
 
         await newImage.save();
@@ -36,15 +38,19 @@ const uploadImage = async (req, res) => {
 
 const getImage = async (req, res) => {
     try {
-        const { name } = req.params; 
-        const image = await Image.findOne({ name }); 
+        const { email } = req.params; 
+        const image = await Image.findOne({ email }); 
 
         if (!image) {
             return res.status(404).json({ message: 'Image not found' });
         }
 
         res.set('Content-Type', image.image.contentType);
-        res.send(image.image.data);
+        res.send({
+            name: image.name,
+            imageData: image.image.data,
+            result: image.result 
+        });
     } catch (error) {
         console.error('Error retrieving image:', error);
         res.status(500).json({ message: 'Error retrieving image. Please try again.' });

@@ -22,29 +22,27 @@ const Welcome = () => {
   const fadeIn = useSpring({
     from: { opacity: 0, transform: 'translateY(20px)' },
     to: { opacity: 1, transform: 'translateY(0)' },
-    config: { duration: 1000 }
+    config: { duration: 2000 }
   });
 
-  // Enhanced parallax effects with smoother transitions
-  const heroY = useTransform(scrollY, [0, 800], [0, -250]);
-  const heroScale = useTransform(scrollY, [0, 400], [1, 0.9]);
+  const heroY = useTransform(scrollY, [0, 1200], [0, -250]);
+  const heroScale = useTransform(scrollY, [0, 800], [1, 0.9]);
   
-  const featuresY = useTransform(scrollY, [200, 800], [200, -100]);
-  const featuresScale = useTransform(scrollY, [200, 600], [0.8, 1]);
-  const featuresOpacity = useTransform(scrollY, [100, 400], [0, 1]);
+  const featuresY = useTransform(scrollY, [200, 1200], [200, -100]);
+  const featuresScale = useTransform(scrollY, [200, 1000], [0.8, 1]);
+  const featuresOpacity = useTransform(scrollY, [100, 800], [0, 1]);
   
-  const ctaY = useTransform(scrollY, [400, 1000], [200, -100]);
-  const ctaScale = useTransform(scrollY, [400, 800], [0.8, 1]);
+  const ctaY = useTransform(scrollY, [400, 1400], [200, -100]);
+  const ctaScale = useTransform(scrollY, [400, 1200], [0.8, 1]);
 
-  // New parallax effects for contact and footer
-  const contactY = useTransform(scrollY, [600, 1200], [200, -50]);
-  const contactScale = useTransform(scrollY, [600, 1000], [0.8, 1]);
-  const contactOpacity = useTransform(scrollY, [500, 800], [0, 1]);
+  const contactY = useTransform(scrollY, [600, 1600], [200, -50]);
+  const contactScale = useTransform(scrollY, [600, 1400], [0.8, 1]);
+  const contactOpacity = useTransform(scrollY, [500, 1200], [0, 1]);
 
-  const footerY = useTransform(scrollY, [800, 1400], [100, 0]);
-  const footerOpacity = useTransform(scrollY, [700, 1000], [0, 1]);
+  const footerY = useTransform(scrollY, [800, 1800], [100, 0]);
+  const footerOpacity = useTransform(scrollY, [700, 1400], [0, 1]);
   
-  const mainOpacity = useTransform(scrollY, [0, 400], [1, 0.7]);
+  const mainOpacity = useTransform(scrollY, [0, 800], [1, 0.7]);
 
   const scrollToFeatures = () => {
     document.getElementById('features').scrollIntoView({ behavior: 'smooth' });
@@ -80,7 +78,7 @@ const Welcome = () => {
           style={{ y: heroY, scale: heroScale, opacity: mainOpacity }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 1.4 }}
           className="text-center mb-24 perspective-1000"
         >
           <animated.div style={fadeIn}>
@@ -134,7 +132,7 @@ const Welcome = () => {
           style={{ y: featuresY, scale: featuresScale, opacity: featuresOpacity }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.8 }}
+          transition={{ delay: 0.4, duration: 2.4 }}
           className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24 perspective-1000"
         >
           <motion.div whileHover={{ scale: 1.03, y: -5 }} className="p-10 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl hover:border-blue-400/30 transition-all duration-300">
@@ -158,7 +156,7 @@ const Welcome = () => {
           style={{ y: ctaY, scale: ctaScale }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.8, duration: 0.8 }}
+          transition={{ delay: 0.8, duration: 2.4 }}
           className="text-center bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-12 shadow-2xl perspective-1000 mb-24"
         >
           <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300 mb-6">Ready to get started?</h2>

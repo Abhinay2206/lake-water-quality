@@ -2,7 +2,7 @@ import numpy as np
 from layers import sigmoid, sigmoid_derivative
 from layers import ConvLayer, MaxPool, Dense
 
-def train_model(X_train, y_train, EPOCHS=20, LEARNING_RATE=0.001):
+def train_model(X_train, y_train, EPOCHS=10, LEARNING_RATE=0.001):
     # Initialize layers
     conv = ConvLayer(8, 3)
     pool = MaxPool(2)
