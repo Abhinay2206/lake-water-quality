@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDarkMode } from "../components/DarkModeContext";
 import { TbArrowBackUpDouble } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
-import {jwtDecode} from "jwt-decode"; 
+import { jwtDecode } from "jwt-decode"; 
 import { FiTrash2 } from "react-icons/fi";
 
 const History = () => {
@@ -14,11 +14,14 @@ const History = () => {
   const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("jwtToken"); 
-    if (token) {
-      const decodedToken = jwtDecode(token); 
-      const storedHistory = JSON.parse(localStorage.getItem(decodedToken.email)) || []; 
-      setHistory(storedHistory);
+    const isLogin = localStorage.getItem("isLogin"); 
+    if (isLogin) {
+      const token = localStorage.getItem("jwtToken"); 
+      if (token) {
+        const decodedToken = jwtDecode(token); 
+        const storedHistory = JSON.parse(localStorage.getItem(decodedToken.email)) || []; 
+        setHistory(storedHistory);
+      }
     }
   }, []);
   

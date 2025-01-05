@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { GiDroplets } from "react-icons/gi";
-import { FiUser, FiLogOut, FiClock } from "react-icons/fi"; 
+import { FiUser, FiLogOut, FiClock, FiHome } from "react-icons/fi"; 
 import FileUpload from "../components/FileUpload";
 import Input from "../components/Input";
 import Results from "../components/Results";
@@ -18,6 +18,7 @@ function PageLayout() {
   const [username, setUsername] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [history, setHistory] = useState([]);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -57,6 +58,12 @@ function PageLayout() {
     e.preventDefault();
     if (!lakeName || !selectedFile) {
       alert("Please enter a lake name and upload an image!");
+      return;
+    }
+
+    const isLogin = localStorage.getItem('isLogin');
+    if (!isLogin) {
+      setShowLoginPrompt(true);
       return;
     }
 
@@ -115,6 +122,29 @@ function PageLayout() {
     }
   };
 
+  const handleContinueWithoutLogin = async () => {
+    setShowLoginPrompt(false);
+    try {
+      const predictionFormData = new FormData();
+      predictionFormData.append("image", selectedFile);
+
+      const predictionResponse = await fetch("http://127.0.0.1:5000/predict", {
+        method: "POST",
+        body: predictionFormData
+      });
+
+      if (!predictionResponse.ok) {
+        throw new Error("Failed to get prediction");
+      }
+
+      const predictionData = await predictionResponse.json();
+      setResult(predictionData);
+      setIsResultsOpen(true);
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
@@ -127,6 +157,7 @@ function PageLayout() {
   const handleLogout = () => {
     setUsername("");
     localStorage.removeItem('jwtToken');
+    localStorage.removeItem('isLogin')
     navigate('/login');
     setDropdownOpen(false);
   };
@@ -138,6 +169,17 @@ function PageLayout() {
       }`}
     >
       <div className="relative">
+        <button
+          className={`fixed top-4 left-20 text-lg flex items-center gap-2
+                    ${darkMode ? "text-gray-200 hover:text-blue-400" : "text-gray-800 hover:text-blue-600"}
+                    border ${darkMode ? "border-gray-600" : "border-gray-300"}
+                    bg-transparent rounded-full px-6 py-2 transition duration-300
+                    hover:bg-opacity-10 hover:border-blue-500 hover:shadow-lg`}
+          onClick={() => navigate('/')}
+        >
+          <FiHome className="text-xl" />
+        </button>
+
         {username ? (
           <>
             <button
@@ -207,6 +249,29 @@ function PageLayout() {
           </button>
         )}
       </div>
+
+      {showLoginPrompt && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} p-6 rounded-lg shadow-xl max-w-md w-full mx-4`}>
+            <h3 className="text-xl font-bold mb-4">Login Required</h3>
+            <p className="mb-6">Login to store your analysis history. Would you like to:</p>
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={() => navigate('/login')}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Login
+              </button>
+              <button
+                onClick={handleContinueWithoutLogin}
+                className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100"
+              >
+                Continue without login
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="text-center py-24 font-roboto">
         <h1 className="text-5xl flex items-center justify-center gap-6 text-blue-600 font-bold mb-6">

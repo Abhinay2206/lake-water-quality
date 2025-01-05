@@ -10,11 +10,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.3s, color 0.3s;
-}
-
-body {
-  background-color: #ffffff; 
-  color: #000000; 
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 body.dark-mode {

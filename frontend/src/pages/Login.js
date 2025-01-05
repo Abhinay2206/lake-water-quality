@@ -4,12 +4,14 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDarkMode } from '../components/DarkModeContext';
 import axios from 'axios';
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { darkMode } = useDarkMode();
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSignIn = async (e) => {
     e.preventDefault();
@@ -20,6 +22,7 @@ const Login = () => {
       });
       console.log('Login successful:', response.data);
       localStorage.setItem('jwtToken', response.data.token);
+      localStorage.setItem('isLogin', true);
       navigate("/page-layout");
     } catch (error) {
       console.error('Login failed:', error.response ? error.response.data : error.message);
@@ -66,16 +69,25 @@ const Login = () => {
             >
               Password
             </label>
-            <input
-              id="password"
-              type="password"
-              placeholder="**********"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className={`shadow appearance-none border rounded w-full py-2 px-3 mb-3 leading-tight focus:outline-none focus:shadow-outline ${
-                darkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'bg-white text-gray-700'
-              }`}
-            />
+            <div className="relative">
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="**********"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={`shadow appearance-none border rounded w-full py-2 px-3 mb-3 leading-tight focus:outline-none focus:shadow-outline ${
+                  darkMode ? 'bg-gray-700 border-gray-600 text-gray-200' : 'bg-white text-gray-700'
+                }`}
+              />
+              <button
+                type="button"
+                className="absolute right-3 top-2"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <FiEyeOff className="text-gray-500" /> : <FiEye className="text-gray-500" />}
+              </button>
+            </div>
           </div>
           
           
