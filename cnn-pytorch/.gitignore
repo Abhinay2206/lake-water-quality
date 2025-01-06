@@ -1,0 +1,56 @@
+# Python bytecode files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+*.env
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+
+# Flask instance folder
+instance/
+
+# Flask log files
+*.log
+
+# Flask migrations folder
+migrations/
+
+# IDE or editor-specific files
+.vscode/
+.idea/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# pytest cache
+.cache/
+
+# coverage reports
+*.coverage
+coverage.xml
+*.cover
+*.hypothesis/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+
+# Sphinx documentation
+_build/
+
+# distribution and packaging
+*.tar.gz
+*.egg
+*.egg-info/
+dist/
+build/
+
+# PyInstaller
+*.spec

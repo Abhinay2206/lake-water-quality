@@ -9,8 +9,8 @@ from visualization import predict
 app = Flask(__name__)
 CORS(app) 
 
-good_quality_path = './data/lake-water-quality/Good_Quality'
-poor_quality_path = './data/lake-water-quality/Poor_Quality'
+good_quality_path = './data/lake-water-quality/good'
+poor_quality_path = './data/lake-water-quality/poor'
 
 X_train, X_test, y_train, y_test = prepare_dataset(good_quality_path, poor_quality_path)
 conv, pool, dense = train_model(X_train, y_train)
