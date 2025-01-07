@@ -56,3 +56,6 @@ build/
 
 # PyInstaller
 *.spec
+
+# Model weights
+satellite_classifier.pth
