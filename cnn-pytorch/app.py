@@ -9,7 +9,6 @@ from model import CNN
 app = Flask(__name__)
 CORS(app) 
 
-# Load the model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = CNN().to(device)
 
@@ -19,7 +18,6 @@ try:
 except FileNotFoundError:
     print("Model file 'satellite_classifier.pth' not found.")
 
-# Define image transformations
 transform = transforms.Compose([
     transforms.Resize((128, 128)),
     transforms.ToTensor(),
@@ -31,14 +29,11 @@ def predict():
     if 'image' not in request.files:
         return jsonify({'error': 'No image provided'}), 400
 
-    # Get the image from the request
     image = request.files['image'].read()
     image = Image.open(io.BytesIO(image))
     
-    # Transform image
     image = transform(image).unsqueeze(0).to(device)
 
-    # Make prediction
     with torch.no_grad():
         outputs = model(image)
         _, predicted = torch.max(outputs, 1)

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { GiDroplets } from "react-icons/gi";
-import { FiUser, FiLogOut, FiClock, FiHome } from "react-icons/fi"; 
+import { FiUser, FiLogOut, FiClock, FiHome} from "react-icons/fi"; 
 import FileUpload from "../components/FileUpload";
 import Input from "../components/Input";
 import Results from "../components/Results";
@@ -19,6 +19,7 @@ function PageLayout() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [history, setHistory] = useState([]);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -67,6 +68,8 @@ function PageLayout() {
       return;
     }
 
+    setIsAnalyzing(true);
+
     try {
       const token = localStorage.getItem('jwtToken');
       const email = token ? JSON.parse(atob(token.split('.')[1])).email : "guest@example.com";
@@ -84,14 +87,18 @@ function PageLayout() {
       }
 
       const predictionData = await predictionResponse.json();
+      
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
       setResult(predictionData);
+      setIsAnalyzing(false);
       setIsResultsOpen(true);
 
       const formData = new FormData();
       formData.append("name", lakeName);
       formData.append("email", email);
       formData.append("image", selectedFile);
-      formData.append("result", JSON.stringify(predictionData)); // Use predictionData instead of result
+      formData.append("result", JSON.stringify(predictionData));
 
       const uploadResponse = await fetch("http://localhost:5010/api/image/upload", {
         method: "POST",
@@ -118,12 +125,15 @@ function PageLayout() {
       setHistory(updatedHistory);
 
     } catch (error) {
+      setIsAnalyzing(false);
       alert(error.message);
     }
   };
 
   const handleContinueWithoutLogin = async () => {
     setShowLoginPrompt(false);
+    setIsAnalyzing(true);
+    
     try {
       const predictionFormData = new FormData();
       predictionFormData.append("image", selectedFile);
@@ -138,9 +148,15 @@ function PageLayout() {
       }
 
       const predictionData = await predictionResponse.json();
+      
+      // Artificial delay to show animation (2 seconds)
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
       setResult(predictionData);
+      setIsAnalyzing(false);
       setIsResultsOpen(true);
     } catch (error) {
+      setIsAnalyzing(false);
       alert(error.message);
     }
   };
@@ -273,9 +289,18 @@ function PageLayout() {
         </div>
       )}
 
+      {isAnalyzing && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} p-8 rounded-lg shadow-xl flex flex-col items-center`}>
+            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+            <p className="text-lg font-semibold">Analyzing water quality...</p>
+          </div>
+        </div>
+      )}
+
       <div className="text-center py-24 font-roboto">
         <h1 className="text-5xl flex items-center justify-center gap-6 text-blue-600 font-bold mb-6">
-          <GiDroplets className="text-6xl animate-bounce" />
+          <GiDroplets className="text-6xl animate-pulse" />
           Lake Water Quality Analysis
         </h1>
         <p className="mt-5 text-lg text-gray-600 dark:text-gray-400">

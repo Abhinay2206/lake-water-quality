@@ -30,7 +30,6 @@ def train_model(model, train_loader, val_loader, device, num_epochs=10):
             train_total += labels.size(0)
             train_correct += (predicted == labels).sum().item()
 
-        # Validation
         model.eval()
         val_loss = 0.0
         val_correct = 0

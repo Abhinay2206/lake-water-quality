@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import numpy as np
-import os
 from data_loader import prepare_dataset
 from train import train_model
 from visualization import predict
