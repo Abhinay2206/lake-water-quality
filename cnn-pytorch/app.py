@@ -36,7 +36,7 @@ def predict():
 
     with torch.no_grad():
         outputs = model(image)
-        _, predicted = torch.max(outputs, 1)
+        predicted = torch.argmax(outputs, dim=1)
 
     return jsonify({'prediction': predicted.item()})
 

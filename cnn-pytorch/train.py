@@ -10,6 +10,9 @@ def train_model(model, train_loader, val_loader, device, num_epochs=10):
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
+    total_params = sum(p.numel() for p in model.parameters())
+    print(f'Total number of parameters: {total_params:,}')
+
     for epoch in range(num_epochs):
         model.train()
         train_loss = 0.0

@@ -88,9 +88,13 @@ function PageLayout() {
 
       const predictionData = await predictionResponse.json();
       
+      const adjustedResult = {
+        prediction: predictionData.prediction
+      };
+
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      setResult(predictionData);
+      setResult(adjustedResult);
       setIsAnalyzing(false);
       setIsResultsOpen(true);
 
@@ -98,7 +102,7 @@ function PageLayout() {
       formData.append("name", lakeName);
       formData.append("email", email);
       formData.append("image", selectedFile);
-      formData.append("result", JSON.stringify(predictionData));
+      formData.append("result", JSON.stringify(adjustedResult));
 
       const uploadResponse = await fetch("http://localhost:5010/api/image/upload", {
         method: "POST",
@@ -113,7 +117,7 @@ function PageLayout() {
       const newHistoryItem = { 
         lakeName, 
         timestamp, 
-        result: predictionData,
+        result: adjustedResult,
         file: selectedFile.name, 
         previewUrl: previewUrl || "" 
       };
@@ -148,11 +152,16 @@ function PageLayout() {
       }
 
       const predictionData = await predictionResponse.json();
+      console.log(predictionData);
       
-      // Artificial delay to show animation (2 seconds)
+      // Adjusting the result to include prediction
+      const adjustedResult = {
+        prediction: predictionData.prediction
+      };
+
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      setResult(predictionData);
+      setResult(adjustedResult);
       setIsAnalyzing(false);
       setIsResultsOpen(true);
     } catch (error) {
@@ -300,7 +309,7 @@ function PageLayout() {
 
       <div className="text-center py-24 font-roboto">
         <h1 className="text-5xl flex items-center justify-center gap-6 text-blue-600 font-bold mb-6">
-          <GiDroplets className="text-6xl animate-pulse" />
+          <GiDroplets className="text-6xl" />
           Lake Water Quality Analysis
         </h1>
         <p className="mt-5 text-lg text-gray-600 dark:text-gray-400">
